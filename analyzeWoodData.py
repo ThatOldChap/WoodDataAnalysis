@@ -29,11 +29,13 @@ def writeData2Spreadsheet(worksheet, data, numRows, startRow, horizAlign):
         worksheet['A' + str(rowOffset)] = data[i][0]
         worksheet['B' + str(rowOffset)] = data[i][1]
         worksheet['C' + str(rowOffset)] = data[i][2]
-
+        worksheet['D' + str(rowOffset)] = data[i][3]
+        
         # Format the cell alignment
         worksheet['A' + str(rowOffset)].alignment = Alignment(horizontal=horizAlign)
         worksheet['B' + str(rowOffset)].alignment = Alignment(horizontal=horizAlign)
         worksheet['C' + str(rowOffset)].alignment = Alignment(horizontal=horizAlign)
+        worksheet['D' + str(rowOffset)].alignment = Alignment(horizontal=horizAlign)
 
 # Function that finds the starting point of the dataset 
 def findMatchIndex(data, colIndex, match, startIndex, direction):
@@ -86,7 +88,7 @@ resultDir = workDir + 'Processed_Files'
 workPath = Path(workDir)
 dataPath = Path(dataDir)
 resultPath = Path(resultDir)
-summaryFilePath = Path(resultDir + '/Results_Summary.xlsx')
+summaryFilePath = Path(resultDir + '/RM_Results.xlsx')
 
 # Creates the Results directory
 if not resultPath.exists():
@@ -114,6 +116,8 @@ dataRegex = re.compile(r'''(
     (\d{5})            # Second column of % of Torque - Feed Curve data
     )''', re.VERBOSE)
 
+rmidRegex = re.compile(r'(\d{3})(.xlsx)')
+
 # Loop through all the files in Data folder
 for filePathIndex in range(dataFileListLen):
 
@@ -124,11 +128,13 @@ for filePathIndex in range(dataFileListLen):
     if newFilePath.is_file():
         continue
     print('Processing file... %s' % oldFilename)
-    
+
+    # Process the data file and extract into a string
     dataFile = open(dataFileList[filePathIndex])
     dataFromFile = dataFile.read()
     dataFile.close()
     dataRaw = dataRegex.findall(dataFromFile)
+    rmid = rmidRegex.findall(newFilePath.name)[0][0]
 
     # Finds the index of the valid 0 string of data gathered from the file
     TWO_ZEROS = '00000;00000'
@@ -147,7 +153,7 @@ for filePathIndex in range(dataFileListLen):
     # Construct the data to be written to the excel file
     dataPrepped = []
     for rows in range(leadZeroIndex + 1, trailZeroIndex):
-        dataPrepped.append([rows - leadZeroIndex - 1,  int(dataRaw[rows][1]), int(dataRaw[rows][2])])
+        dataPrepped.append([rows - leadZeroIndex - 1,  int(dataRaw[rows][1]), int(dataRaw[rows][2]), ''])
 
     # Calculate the number of rows of data to write
     dataLen = len(dataPrepped)
@@ -159,28 +165,35 @@ for filePathIndex in range(dataFileListLen):
     sheet = wb[sheet.title]
 
     # Workheet formatting
-    sheet.row_dimensions[1].height = 30
     sheet.column_dimensions['A'].width = 8
-    sheet.column_dimensions['B'].width = 15
-    sheet.column_dimensions['C'].width = 15
-
+    sheet.column_dimensions['B'].width = 8
+    sheet.column_dimensions['C'].width = 8
+    sheet.column_dimensions['D'].width = 12
+    sheet.column_dimensions['E'].width = 30
+    # Create a setColDim(shet, column, width)
+    
     # Column titles
     sheet['A1'] = 'Index'
-    sheet['B1'] = 'Drill Curve\n(% of Torque)'
-    sheet['C1'] = 'Feed Curve\n (% of Torque)'
+    sheet['B1'] = 'Drill'
+    sheet['C1'] = 'Feed'
+    sheet['D1'] = 'Filename'
 
     # Column formatting
     sheet['A1'].alignment = Alignment(horizontal='center', vertical='center')
     sheet['B1'].alignment = Alignment(horizontal='center', vertical='center')
     sheet['C1'].alignment = Alignment(horizontal='center', vertical='center')
+    sheet['D1'].alignment = Alignment(horizontal='center', vertical='center')
+    sheet['E1'].alignment = Alignment(horizontal='center', vertical='center')
     sheet['A1'].font = Font(bold=True)
     sheet['B1'].font = Font(bold=True)
     sheet['C1'].font = Font(bold=True)
+    sheet['D1'].font = Font(bold=True)
 
     # Label and add the average values at the top of the data columns
     sheet['A2'] = 'Average'
     sheet['B2'] = drillCurveAvg
     sheet['C2'] = feedCurveAvg
+    sheet['E1'] = newFilePath.name
     
     # Column formatting
     sheet['A2'].alignment = Alignment(horizontal='center')
@@ -226,7 +239,7 @@ for filePathIndex in range(dataFileListLen):
     wb.save(os.path.abspath(newFilePath))
     
     # Store the required data for the results summary file
-    summaryData.append([newFilePath.name, drillCurveAvg, feedCurveAvg])
+    summaryData.append([rmid, drillCurveAvg, feedCurveAvg, newFilePath.name])
     numNewFiles += 1
 
 # Calculate length of summaryData to be used next
@@ -241,24 +254,27 @@ if not summaryFilePath.is_file():
     summarySheet = summaryWorkbook[summarySheet.title]
 
     # Worksheet formatting
-    summarySheet.row_dimensions[1].height = 30
-    summarySheet.column_dimensions['A'].width = 40
-    summarySheet.column_dimensions['B'].width = 20
-    summarySheet.column_dimensions['C'].width = 20
+    summarySheet.column_dimensions['A'].width = 8
+    summarySheet.column_dimensions['B'].width = 8
+    summarySheet.column_dimensions['C'].width = 8
+    summarySheet.column_dimensions['D'].width = 30
 
     # Column titles
-    summarySheet['A1'] = 'Filename'
-    summarySheet['B1'] = 'Average Drill Curve\n(% of Torque)'
-    summarySheet['C1'] = 'Average Feed Curve\n (% of Torque)'
+    summarySheet['A1'] = 'RMID'
+    summarySheet['B1'] = 'Drill'
+    summarySheet['C1'] = 'Feed'
+    summarySheet['D1'] = 'Filename'
 
     # Column formatting
     summarySheet['A1'].alignment = Alignment(horizontal='center', vertical='center')
     summarySheet['B1'].alignment = Alignment(horizontal='center', vertical='center')
     summarySheet['C1'].alignment = Alignment(horizontal='center', vertical='center')
+    summarySheet['D1'].alignment = Alignment(horizontal='center', vertical='center')
     summarySheet['A1'].font = Font(bold=True)
     summarySheet['B1'].font = Font(bold=True)
     summarySheet['C1'].font = Font(bold=True)
-
+    summarySheet['D1'].font = Font(bold=True)
+    
     # Refills summaryData with any missing data to recreate the full results summary file
     if sumDataLen < dataFileListLen:
 
@@ -280,12 +296,13 @@ if not summaryFilePath.is_file():
             resultWorkbook = openpyxl.load_workbook(resultFilePath)
             resultSheet = resultWorkbook[resultFilePath.stem]
 
-            # Re-obtain the average values 
+            # Re-obtain the average values
+            rmid = resultSheet['A2'].value
             drillCurveAvg = resultSheet['B2'].value
             feedCurveAvg = resultSheet['C2'].value
 
             # Load summaryData back with the missing data
-            summaryData.append([resultFilename, drillCurveAvg, feedCurveAvg])
+            summaryData.append([rmid, drillCurveAvg, feedCurveAvg, resultFilename])
             numNewFiles += 1
             sumDataLen += 1
             
@@ -309,19 +326,19 @@ else:
     processedFileList = []
     for i in range(lastRow):
         rowOffset = i + 2
-        processedFileList.append(summarySheet['A' + str(rowOffset)].value)
+        processedFileList.append(summarySheet['D' + str(rowOffset)].value)
 
     # Process summaryData and check if any of the files have already been processed
     for i in range(sumDataLen):
         rowOffset = lastRow + i + 1
-        if processedFileList.count(summaryData[i][0]) > 0:
+        if processedFileList.count(summaryData[i][3]) > 0:
             # Skips overwriting or adding duplicate data if an already processed result file
             # was deleted and regenerated by the script
             numNewFiles -= 1
             continue
         else:
             # Update the summary file with the new results
-            newSummaryDataRow = [summaryData[i][0], summaryData[i][1], summaryData[i][2]]
+            newSummaryDataRow = [summaryData[i][0], summaryData[i][1], summaryData[i][2], summaryData[i][3]]
             writeData2Spreadsheet(summarySheet, newSummaryDataRow, 1, lastRow + 1, 'center')
 
     # Save the updates made to the summary file
