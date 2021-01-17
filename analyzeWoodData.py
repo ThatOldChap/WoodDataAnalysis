@@ -1,7 +1,9 @@
 #! usr/bin/python3
 # analyzeWoodData.py - Analyzes and summarizes data files from a Resistograph
 # Made for Natalie by Michael
-#
+# 
+# *** Remember to change the shebang line to #! python3 for Windows ***
+# 
 # Future TODO:  1) Create a master data file
 #               2) Backup that master data file on google drive or equivalent
 
@@ -100,7 +102,7 @@ elif isWin:
     basePath = 'C:\\Users\\'
     baseDir = '\\Documents\\School\\NSERC\\Thesis\\'
     thesisDataDir = '03_Testing\\Test_Out\\RM_Raw'
-    thesisResultDir = '04_Result Evaluation\\'
+    thesisResultDir = '04_Result Evaluation'
     baseSumFilename = '\\RM_Results.xlsx'
     pathSep = '\\'   
 
