@@ -273,6 +273,7 @@ for filePathIndex in range(dataFileListLen):
 
 # Calculate length of summaryData to be used next
 sumDataLen = len(summaryData)
+sumaryData = sorted(summaryData)
 
 if not summaryFilePath.is_file():
     # Create a results summary workbook if it does not exist already
@@ -326,7 +327,7 @@ if not summaryFilePath.is_file():
             resultSheet = resultWorkbook[resultFilePath.stem]
 
             # Re-obtain the average values
-            rmid = resultSheet['A2'].value
+            rmid = int(rmidRegex.findall(resultSheet['E1'].value)[0][0])
             drillCurveAvg = resultSheet['B2'].value
             feedCurveAvg = resultSheet['C2'].value
 
@@ -336,6 +337,7 @@ if not summaryFilePath.is_file():
             sumDataLen += 1
             
     # Populates the first set of data into the summary file
+    summaryData = sorted(summaryData)
     writeData2Spreadsheet(summarySheet, summaryData, sumDataLen, 2, 'center')
 
     # Save the new results summary file
