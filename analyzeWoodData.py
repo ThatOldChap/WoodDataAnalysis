@@ -79,8 +79,32 @@ def pluralSFix(num):
     else:
         return 's'
 
+# Check whether the script is being run on Windows or Linux
+cwd = Path(os.getcwd())
+if cwd.anchor == 'C:\\':
+    isWin = True
+    isLnx = False
+elif cwd.anchor == '/':
+    isLnx = True
+    isWin = False
+
+if isLnx:
+    basePath = '/home/'
+    baseDir = '/Projects/Python_Learning/Wood_Data_Analysis/'
+    baseSumFilename = '/RM_Results.xlsx'
+    pathSep = '/'
+    
+    
+elif isWin:
+    basePath = 'C:\\'
+    baseDir = '\\Documents\\School\\NSERC\\Thesis\\04_Result Evaluation\\'
+    baseSumFilename = '\\RM_Results.xlsx'
+    pathSep = '\\'
+
+    
+
 # Working directory strings
-workDir = ('/home/' + getpass.getuser() + '/Projects/Python_Learning/Wood_Data_Analysis/')
+workDir = (basePath + getpass.getuser() + baseDir)
 dataDir = workDir + 'Data_Files'
 resultDir = workDir + 'Processed_Files'
 
@@ -88,7 +112,7 @@ resultDir = workDir + 'Processed_Files'
 workPath = Path(workDir)
 dataPath = Path(dataDir)
 resultPath = Path(resultDir)
-summaryFilePath = Path(resultDir + '/RM_Results.xlsx')
+summaryFilePath = Path(resultDir + baseSumFilename)
 
 # Creates the Results directory
 if not resultPath.exists():
@@ -124,7 +148,7 @@ for filePathIndex in range(dataFileListLen):
     # Skip over the file if a result file already exists
     oldFilename = dataFileList[filePathIndex].name
     newFilename = dataFileList[filePathIndex].stem.replace(' ', '_')
-    newFilePath = Path(resultDir + '/' + newFilename + '.xlsx')
+    newFilePath = Path(resultDir + pathSep + newFilename + '.xlsx')
     if newFilePath.is_file():
         continue
     print('Processing file... %s' % oldFilename)
