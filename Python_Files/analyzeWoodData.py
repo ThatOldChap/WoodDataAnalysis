@@ -128,10 +128,8 @@ if not resultPath.exists():
 dataFileList = list(dataPath.glob('*.txt'))
 dataFileListLen = len(dataFileList)
 
-# List of result file paths excluding the results file
+# List of result file paths
 resultFileList = list(resultPath.glob('*.xlsx'))
-if summaryFilePath.is_file():
-    resultFileList.remove(summaryFilePath)
 resultFileListLen = len(resultFileList)
 
 # Initializing global variables
