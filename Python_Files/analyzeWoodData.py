@@ -261,7 +261,7 @@ for filePathIndex in range(dataFileListLen):
     # Add the data series and create the chart
     chartObj.append(drillCurveSeries)
     chartObj.append(feedCurveSeries)
-    sheet.add_chart(chartObj, 'E2')
+    sheet.add_chart(chartObj, 'D2')
 
     # Save the file after all edits are finished being made
     print('Generated new file... %s' % (newFilePath.name))
