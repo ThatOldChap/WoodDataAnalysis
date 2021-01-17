@@ -104,7 +104,7 @@ elif isWin:
     baseDir = '\\Documents\\School\\NSERC\\Thesis\\'
     thesisDataDir = '03_Testing\\Test_Out\\RM_Raw'
     thesisResultDir = '03_Testing\\Test_Out\\RM_Processed'
-    thesisSumFileDir = '04_Result Evaluation'
+    thesisSumFileDir = '04_Result Evaluation\\Input'
     baseSumFilename = '\\RM_Results.xlsx'
     pathSep = '\\'   
 
