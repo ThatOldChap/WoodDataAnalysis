@@ -91,22 +91,23 @@ elif cwd.anchor == '/':
 if isLnx:
     basePath = '/home/'
     baseDir = '/Projects/Python_Learning/Wood_Data_Analysis/'
+    thesisDataDir = 'Data_Files'
+    thesisResultDir = 'Processed_Files'
     baseSumFilename = '/RM_Results.xlsx'
     pathSep = '/'
     
-    
 elif isWin:
-    basePath = 'C:\\'
-    baseDir = '\\Documents\\School\\NSERC\\Thesis\\04_Result Evaluation\\'
+    basePath = 'C:\\Users\\'
+    baseDir = '\\Documents\\School\\NSERC\\Thesis\\'
+    thesisDataDir = '03_Testing\\Test_Out\\RM_Raw'
+    thesisResultDir = '04_Result Evaluation\\'
     baseSumFilename = '\\RM_Results.xlsx'
-    pathSep = '\\'
-
-    
+    pathSep = '\\'   
 
 # Working directory strings
 workDir = (basePath + getpass.getuser() + baseDir)
-dataDir = workDir + 'Data_Files'
-resultDir = workDir + 'Processed_Files'
+dataDir = workDir + thesisDataDir
+resultDir = workDir + thesisResultDir
 
 # Working directory Paths
 workPath = Path(workDir)
@@ -240,7 +241,7 @@ for filePathIndex in range(dataFileListLen):
 
     # Chart formatting
     chartObj = ScatterChart(scatterStyle='smoothMarker')
-    chartObj.title = 'Resistograph Drill Curve vs. Feed Curve'
+    chartObj.title = 'Resistance Drill Results'
     chartObj.height = 15
     chartObj.width = 35  
 
