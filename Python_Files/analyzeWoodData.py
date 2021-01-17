@@ -163,7 +163,7 @@ for filePathIndex in range(dataFileListLen):
     dataFromFile = dataFile.read()
     dataFile.close()
     dataRaw = dataRegex.findall(dataFromFile)
-    rmid = rmidRegex.findall(newFilePath.name)[0][0]
+    rmid = int(rmidRegex.findall(newFilePath.name)[0][0])
 
     # Finds the index of the valid 0 string of data gathered from the file
     TWO_ZEROS = '00000;00000'
