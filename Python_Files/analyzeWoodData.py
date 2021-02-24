@@ -367,7 +367,7 @@ else:
             continue
         else:
             # Update the summary file with the new results
-            newSummaryDataRow = [summaryData[i][0], summaryData[i][1], summaryData[i][2], summaryData[i][3]]
+            newSummaryDataRow = [[summaryData[i][0], summaryData[i][1], summaryData[i][2], summaryData[i][3]]]
             writeData2Spreadsheet(summarySheet, newSummaryDataRow, 1, lastRow + 1, 'center')
 
     # Save the updates made to the summary file
